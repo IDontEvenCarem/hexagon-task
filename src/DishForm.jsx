@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import './DishForm.css'
 import ReactInputMask from 'react-input-mask'
 
-// Create the label and error fields for the wrapped component
+// Create the label and error fields for the wrapped component, to reduce repetition
 const DishFieldWrapper = (Fncomp) => (props) =>
     (
         <div className="dishform__field">
