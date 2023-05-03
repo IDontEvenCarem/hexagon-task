@@ -1,0 +1,27 @@
+.dishform {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 1ch;
+    padding: 10px;
+    background-color: black;
+}
+
+.dishform__field {
+    display: contents;
+}
+
+.dishform__label {
+    text-align: right;
+}
+
+.dishform__button {
+    grid-column: 1/3;
+}
+
+.dishform__error {
+    grid-column: span 2;
+    font-size: 0.8em;
+    color: red;
+    font-style: italic;
+    margin-bottom: 5px;
+}
