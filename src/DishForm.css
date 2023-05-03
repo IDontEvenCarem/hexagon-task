@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: max-content 1fr;
     column-gap: 1ch;
+    row-gap: 5px;
     padding: 10px;
     background-color: black;
 }

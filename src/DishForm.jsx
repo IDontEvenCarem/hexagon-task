@@ -1,61 +1,75 @@
 import { formValueSelector } from 'redux-form'
-import {Field, reduxForm} from 'redux-form'
-import {useSelector} from 'react-redux'
+import { Field, reduxForm } from 'redux-form'
+import { useSelector } from 'react-redux'
 import './DishForm.css'
+import { Component } from 'react'
 
-function DishFieldText ({input, label, meta: {touched, error}}) {
+
+// Create the label and error fields for the wrapped component
+const DishFieldWrapper = Fncomp => props => (
+    <div className='dishform__field'>
+        <label className='dishform__label'>{props.label}</label>
+        <Fncomp {...props}></Fncomp>
+        {props.meta.touched && props.meta.error && (
+            <div className='dishform__error'>{props.meta.error}</div>
+        )}
+    </div>
+)
+
+function BasicTextField({ input }) {
     return (
-        <div className='dishform__field'>
-            <label className='dishform__label'>{label}</label>
-            <input {...input}></input>
-            {touched && error && (<div className='dishform__error'>{error}</div>)}
-        </div>
+        <input {...input}></input>
     )
 }
 
-function DishFieldPreptime ({input, label, meta: {touched, error}}) {
+function PreptimeField({ input }) {
     return (
-        <div className='dishform__field'>
-            <label className='dishform__label'>{label}</label>
-            <input {...input} placeholder='00:00:00'></input>
-            {touched && error && (<div className='dishform__error'>{error}</div>)}
-        </div>
+        <input {...input} placeholder='00:00:00'></input>
     )
 }
 
-function DishFieldOption ({input, options, label, meta: {touched, error}}) {
+function OptionsField({ input, options }) {
     return (
-        <div className='dishform__field'>
-            <label className='dishform__label'>{label}</label>
-            <select {...input}>
-                <option>None selected</option>
-                {options.map(({label, value}) => (<option key={value} value={value}>{label}</option>))}
-            </select>
-        </div>
+        <select {...input}>
+            {options.map(({ label, value }) => <option key={value} value={value}>{label}</option>)}
+        </select>
     )
 }
 
-function DishForm (props) {
-    const {handleSubmit} = props
+function NumberRangeField({ input, min, max }) {
+    return (
+        <input {...input} min={min} max={max} type="number"></input>
+    )
+}
+
+function DishForm(props) {
+    const { handleSubmit } = props
     const formSelector = formValueSelector('dish')
     const type = useSelector(state => formSelector(state, "type"))
 
     const typeOptions = [
-        {label: "Pizza", value: "pizza"},
-        {label: "Soup", value: "soup"},
-        {label: "Sandwich", value: "sandwich"}
+        { label: "None selected" },
+        { label: "Pizza", value: "pizza" },
+        { label: "Soup", value: "soup" },
+        { label: "Sandwich", value: "sandwich" }
     ]
 
     return (
         <form onSubmit={handleSubmit} className='dishform'>
-            <Field name="name" label="Name" placeholder='Suflet Mignion' component={DishFieldText}></Field>
-            <Field name="preparation_time" label="Preparation Time" component={DishFieldPreptime}></Field>
-            <Field name="type" label="Dish type" options={typeOptions} component={DishFieldOption}></Field>
+            <Field name="name" label="Name" placeholder='Suflet Mignion' component={DishFieldWrapper(BasicTextField)}></Field>
+            <Field name="preparation_time" label="Preparation Time" component={DishFieldWrapper(PreptimeField)}></Field>
+            <Field name="type" label="Dish type" options={typeOptions} component={DishFieldWrapper(OptionsField)}></Field>
             {type === 'pizza' && (
                 <>
-                    <Field name='no_of_slices' label="Number of slices" component={DishFieldText}></Field>
-                    <Field name='diameter' label="Diameter" component={DishFieldText}></Field>
+                    <Field name='no_of_slices' label="Number of slices" component={DishFieldWrapper(BasicTextField)}></Field>
+                    <Field name='diameter' label="Diameter" component={DishFieldWrapper(BasicTextField)}></Field>
                 </>
+            )}
+            {type === 'soup' && (
+                <Field name='spiciness_scale' label="Spiciness Scale" min={1} max={10} component={DishFieldWrapper(NumberRangeField)}></Field>
+            )}
+            {type === 'sandwich' && (
+                <Field name='slices_of_bread' label="Slices of Bread" min={1} component={DishFieldWrapper(NumberRangeField)}></Field>
             )}
             <input type="submit" value="Save" className='dishform__button'></input>
         </form>
@@ -64,6 +78,8 @@ function DishForm (props) {
 
 const validate = data => {
     const errors = {}
+
+    // validating common fields
     if (!data.name) {
         errors.name = "Name is required"
     }
@@ -73,14 +89,44 @@ const validate = data => {
     if (!data.type) {
         errors.type = "You must select a type for the dish"
     }
-    if (data.type && data.type === 'pizza') {
-        if (!data.no_of_slices) {
-            errors.no_of_slices = "Number of slices is required"
+
+    // validating type specific fields
+    if (data.type) {
+        // validating pizza
+        if (data.type === 'pizza') {
+            if (!data.no_of_slices) {
+                errors.no_of_slices = "Number of slices is required"
+            }
+            if (!data.diameter) {
+                errors.diameter = "Diameter is required"
+            }
         }
-        if (!data.diameter) {
-            errors.diameter = "Diameter is required"
+
+        // validating soup
+        if (data.type === 'soup') {
+            if (!data.spiciness_scale) {
+                errors.spiciness_scale = 'Spiciness scale is required'
+            } else {
+                const nspicy = parseInt(data.spiciness_scale)
+                if (nspicy < 1 || nspicy > 10) {
+                    errors.spiciness_scale = 'Spiciness scale goes from 1 to 10'
+                }
+            }
+        }
+
+        // validating sandwiches
+        if (data.type === 'sandwich') {
+            if (!data.slices_of_bread) {
+                errors.slices_of_bread = "Number of slices is required"
+            } else {
+                alert(1)
+                if (parseInt(data.slices_of_bread) < 1) {
+                    errors.slices_of_bread = "A sandwitch has to have at least one slice"
+                }
+            }
         }
     }
+
     return errors
 }
 

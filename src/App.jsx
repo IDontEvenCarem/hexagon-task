@@ -7,7 +7,7 @@ function App() {
   }
 
   return (
-    <div class="center-content">
+    <div className="center-content">
       <DishForm onSubmit={dishSubmitHandler}></DishForm>
     </div>
   )
