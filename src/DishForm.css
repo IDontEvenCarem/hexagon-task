@@ -70,6 +70,25 @@
     }
 
     .dishform__fields-container {
-        display: unset;
+        display: block;
     }
+
+    .dishform__fields {
+        display: block;
+    }
+
+    .dishform__field {
+        display: grid;
+        grid-template-columns: 1fr;
+        padding-bottom: 2ch;
+    }
+
+    .dishform__label {
+        text-align: center;
+    }
+    .dishform__error {
+        padding-top: 5px;
+        grid-column: auto;
+    }
+
 }
