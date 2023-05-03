@@ -2,13 +2,12 @@ import { formValueSelector } from 'redux-form'
 import { Field, reduxForm } from 'redux-form'
 import { useSelector } from 'react-redux'
 import './DishForm.css'
-import { Component } from 'react'
 
 
 // Create the label and error fields for the wrapped component
 const DishFieldWrapper = Fncomp => props => (
     <div className='dishform__field'>
-        <label className='dishform__label'>{props.label}</label>
+        <label className='dishform__label'>{props.label}:</label>
         <Fncomp {...props}></Fncomp>
         {props.meta.touched && props.meta.error && (
             <div className='dishform__error'>{props.meta.error}</div>
@@ -31,7 +30,7 @@ function PreptimeField({ input }) {
 function OptionsField({ input, options }) {
     return (
         <select {...input}>
-            {options.map(({ label, value }) => <option key={value} value={value}>{label}</option>)}
+            {options.map(({ label, value }) => <option key={value || "__NoKey"} value={value}>{label}</option>)}
         </select>
     )
 }
@@ -56,22 +55,29 @@ function DishForm(props) {
 
     return (
         <form onSubmit={handleSubmit} className='dishform'>
-            <Field name="name" label="Name" placeholder='Suflet Mignion' component={DishFieldWrapper(BasicTextField)}></Field>
-            <Field name="preparation_time" label="Preparation Time" component={DishFieldWrapper(PreptimeField)}></Field>
-            <Field name="type" label="Dish type" options={typeOptions} component={DishFieldWrapper(OptionsField)}></Field>
-            {type === 'pizza' && (
-                <>
-                    <Field name='no_of_slices' label="Number of slices" component={DishFieldWrapper(BasicTextField)}></Field>
-                    <Field name='diameter' label="Diameter" component={DishFieldWrapper(BasicTextField)}></Field>
-                </>
-            )}
-            {type === 'soup' && (
-                <Field name='spiciness_scale' label="Spiciness Scale" min={1} max={10} component={DishFieldWrapper(NumberRangeField)}></Field>
-            )}
-            {type === 'sandwich' && (
-                <Field name='slices_of_bread' label="Slices of Bread" min={1} component={DishFieldWrapper(NumberRangeField)}></Field>
-            )}
-            <input type="submit" value="Save" className='dishform__button'></input>
+            <p className='dishform__header'>
+                Submit-a-dish
+            </p>
+            <div className='dishform__fields-container'>
+                <div className='dishform__fields'>
+                    <Field name="name" label="Name" placeholder='Suflet Mignion' component={DishFieldWrapper(BasicTextField)}></Field>
+                    <Field name="preparation_time" label="Preparation Time" component={DishFieldWrapper(PreptimeField)}></Field>
+                    <Field name="type" label="Dish type" options={typeOptions} component={DishFieldWrapper(OptionsField)}></Field>
+                    {type === 'pizza' && (
+                        <>
+                            <Field name='no_of_slices' label="Number of slices" component={DishFieldWrapper(BasicTextField)}></Field>
+                            <Field name='diameter' label="Diameter" component={DishFieldWrapper(BasicTextField)}></Field>
+                        </>
+                    )}
+                    {type === 'soup' && (
+                        <Field name='spiciness_scale' label="Spiciness Scale" min={1} max={10} component={DishFieldWrapper(NumberRangeField)}></Field>
+                        )}
+                    {type === 'sandwich' && (
+                        <Field name='slices_of_bread' label="Slices of Bread" min={1} component={DishFieldWrapper(NumberRangeField)}></Field>
+                        )}
+                </div>
+            </div>
+            <input type="submit" value="Send!" className='dishform__button'></input>
         </form>
     )
 }

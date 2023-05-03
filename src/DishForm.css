@@ -1,10 +1,40 @@
 .dishform {
+    --bradius: 5px;
+
+    background-color: #EDE7B1;
+    border-radius: var(--bradius);
+    font-family: 'Source Serif Pro', serif;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    padding-bottom: 5ch;
+}
+
+.dishform__header {
+    grid-column: 1/3;
+    background-color: #137547;
+    color: white;
+    border-radius: var(--bradius) var(--bradius) 0 0;
+    padding: 10px;
+    font-weight: 700;
+    font-size: xx-large;
+    margin-bottom: 10px;
+    box-shadow: 0px 5px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dishform__fields-container {
+    display: grid;
+    grid-template-columns: 1fr 500px 1fr;
+}
+
+.dishform__fields-container > * {
+    grid-column: 2/3;
+}
+
+.dishform__fields {
     display: grid;
     grid-template-columns: max-content 1fr;
     column-gap: 1ch;
     row-gap: 5px;
     padding: 10px;
-    background-color: black;
 }
 
 .dishform__field {
@@ -17,12 +47,29 @@
 
 .dishform__button {
     grid-column: 1/3;
+    background-color: #2A9134;
+    color: white;
+    padding: 1ch 4ch;
+    border-radius: 5px;
+    border: none;
+    font-size: large;
+    cursor: pointer;
 }
 
 .dishform__error {
-    grid-column: span 2;
-    font-size: 0.8em;
+    grid-column: 1/3;
+    font-size: 0.9em;
     color: red;
     font-style: italic;
     margin-bottom: 5px;
+}
+
+@media only screen and (max-width: 480px) {
+    .dishform {
+        grid-template-columns: 1fr;
+    }
+
+    .dishform__fields-container {
+        display: unset;
+    }
 }
